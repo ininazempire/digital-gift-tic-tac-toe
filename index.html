@@ -2,238 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pixel Tic Tac Toe ❤️ Proposal</title>
+  <title>Pixel Tic Tac Toe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Fonts: Press Start 2P (pixel font) -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
-  html, body {
-    box-sizing: border-box;
-    width: 100vw;
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-  body {
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    background: linear-gradient(135deg, #ffe1f5 0%, #c4faf6 100%);
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  h1 {
-    color: #ff69b4;
-    text-shadow: 2px 2px 0 #fff, 4px 4px 0 #c4faf6;
-    margin-top: 20px;
-    font-size: 1.25rem;
-    letter-spacing: 1px;
-  }
-  #status {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
-    color: #666;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    letter-spacing: 1px;
-    text-align: center;
-  }
-  #game {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 4vw;
-    width: 94vw;
-    max-width: 340px;
-    aspect-ratio: 1 / 1;
-    margin: 18px auto 4px auto;
-    padding: 3vw;
-    background: #ffe1f5;
-    border-radius: 10px;
-    box-shadow: 0 2px 16px #ff69b433, 0 0 0 6px #ff69b422;
-    border: 3px solid #c4faf6;
-    position: relative;
-  }
-  .cell {
-    width: 100%;
-    height: 100%;
-    min-width: 60px;
-    min-height: 60px;
-    background: #fff8fc;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    font-size: 7vw;
-    color: #ff69b4;
-    border: 3px solid #aee1f9;
-    border-radius: 0;
-    box-shadow: 0 6px 0 0 #c4faf6, 0 0 0 2px #ff69b4 inset;
-    cursor: pointer;
-    outline: none;
-    position: relative;
-    transition: background 0.2s, box-shadow 0.15s;
-    image-rendering: pixelated;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    aspect-ratio: 1 / 1;
-  }
-  .cell:active {
-    background: #ffe1f5;
-    box-shadow: 0 2px 0 0 #c4faf6, 0 0 0 2px #ff69b4 inset;
-  }
-  .cell.winner {
-    background: #ffe1f5;
-    color: #f95fa3;
-    box-shadow: 0 0 0 6px #f95fa3 inset, 0 10px 0 0 #ffe1f5;
-    animation: winPop 0.5s;
-  }
-  @keyframes winPop {
-    0% { transform: scale(1.1); }
-    80% { transform: scale(1.0); }
-    100% { transform: scale(1); }
-  }
-  #reset {
-    margin: 12px 0 0 0;
-    padding: 8px 20px;
-    background: #ff69b4;
-    color: #fff;
-    border: 3px solid #aee1f9;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    font-size: 1rem;
-    border-radius: 0;
-    cursor: pointer;
-    box-shadow: 0 3px 0 0 #c4faf6;
-    transition: background 0.2s, box-shadow 0.2s;
-  }
-  #reset:active {
-    background: #f95fa3;
-    box-shadow: 0 1px 0 0 #c4faf6;
-  }
-  /* Popup */
-  #popup {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(255, 193, 240, 0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-  }
-  #popup-content {
-    background: #fff8fc;
-    border: 6px solid #ff69b4;
-    border-radius: 0;
-    box-shadow: 0 6px 36px #ff69b455;
-    padding: 8vw 4vw;
-    max-width: 95vw;
-    text-align: center;
-    color: #ff69b4;
-    font-size: 1rem;
-    position: relative;
-    image-rendering: pixelated;
-    animation: popupIn 0.5s;
-  }
-  @keyframes popupIn {
-    0% { transform: scale(0.8); opacity: 0;}
-    100% { transform: scale(1); opacity: 1;}
-  }
-  .popup-heart {
-    display: block;
-    margin: 0 auto 18px auto;
-    width: 52px;
-    height: 52px;
-    image-rendering: pixelated;
-  }
-  #popup-content h2 {
-    font-size: 1rem;
-    margin: 0 0 10px 0;
-    color: #f95fa3;
-    text-shadow: 2px 2px #ffe1f5;
-    letter-spacing: 1px;
-  }
-  #popup-content p {
-    color: #ff69b4;
-    font-size: 0.85rem;
-    margin-bottom: 10px;
-    line-height: 1.5;
-    letter-spacing: 1px;
-  }
-  #close-popup {
-    margin-top: 18px;
-    padding: 8px 24px;
-    background: #ff69b4;
-    color: #fff;
-    border: 3px solid #aee1f9;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    font-size: 1rem;
-    border-radius: 0;
-    cursor: pointer;
-    box-shadow: 0 2px 0 0 #c4faf6;
-    transition: background 0.2s;
-  }
-  #close-popup:hover {
-    background: #f95fa3;
-  }
-  @media (max-width: 600px) {
-    h1 { font-size: 1rem; }
-    #status { font-size: 0.85rem; }
-    #game {
-      width: 98vw;
-      max-width: 99vw;
-      gap: 2vw;
-      padding: 2vw;
-      border-width: 2px;
-    }
-    .cell {
-      font-size: 9vw;
-      min-width: 48px;
-      min-height: 48px;
-    }
-    #popup-content {
-      padding: 6vw 3vw;
-    }
-    #reset, #close-popup {
-      font-size: 0.9rem;
-      padding: 6px 14px;
-    }
-  }
-</style>
+    body { font-family: monospace; background: #f1f1f1; display: flex; flex-direction: column; align-items: center; }
+    #game { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(3, 60px); gap: 6px; margin: 30px 0; }
+    .cell { width: 60px; height: 60px; font-size: 2rem; text-align: center; background: #fff; border: 2px solid #aaa; cursor: pointer; }
+    .cell.winner { background: #c0ffc0; }
+    #status { margin: 10px; }
+    #reset { margin-top: 10px; }
+  </style>
 </head>
 <body>
   <h1>Pixel Tic Tac Toe</h1>
   <div id="status">Your turn!</div>
   <div id="game"></div>
-  <button id="reset">RESTART</button>
-  <div id="popup">
-    <div id="popup-content">
-      <span class="popup-heart"></span>
-      <h2>Will You Be My Pixel Player 2? 💖</h2>
-      <p>
-        Just like in this pixel game,<br>
-        life is much brighter and sweeter when played together.<br>
-        <strong>So... will you make your move and say YES<br>
-        to a lifetime of love and fun adventures with me?</strong>
-      </p>
-      <button id="close-popup">YES! Let's Win Together 💍</button>
-    </div>
-  </div>
-  <!-- SOUND EFFECTS: free online sources, no 404s -->
-  <audio id="move-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b7e1d.mp3"></audio>
-  <audio id="win-sound" src="https://cdn.pixabay.com/audio/2022/10/16/audio_129b8f0d0f.mp3"></audio>
+  <button id="reset">Restart</button>
   <script>
     const gameBoard = document.getElementById('game');
     const statusText = document.getElementById('status');
     const resetBtn = document.getElementById('reset');
-    const popup = document.getElementById('popup');
-    const closePopup = document.getElementById('close-popup');
-    const moveSound = document.getElementById('move-sound');
-    const winSound = document.getElementById('win-sound');
 
     let board = Array(9).fill('');
     let currentPlayer = 'X'; // Player is always 'X', computer is 'O'
@@ -246,7 +34,6 @@
         const div = document.createElement('button');
         div.className = 'cell';
         div.innerText = cell;
-        // Only allow click if game is active, cell is empty, and it's player's turn
         div.disabled = !gameActive || cell !== '' || currentPlayer !== 'X';
         if (winLine.includes(idx)) div.classList.add('winner');
         div.addEventListener('click', () => handleMove(idx));
@@ -256,37 +43,32 @@
 
     function handleMove(idx) {
       if (!gameActive || board[idx] !== '' || currentPlayer !== 'X') return;
-      board[idx] = currentPlayer;
-      playMoveSound();
+      winLine = [];
+      board[idx] = 'X';
       renderBoard();
-      const won = checkWin(board, currentPlayer);
+      const won = checkWin(board, 'X');
       if (won) {
         winLine = won;
         renderBoard();
-        statusText.innerText = `You win! 🎉`;
+        statusText.innerText = `You win!`;
         gameActive = false;
-        playWinSound();
-        setTimeout(showProposal, 900);
       } else if (board.every(cell => cell !== '')) {
         statusText.innerText = "It's a draw!";
         gameActive = false;
-        playWinSound();
-        setTimeout(showProposal, 900);
       } else {
         currentPlayer = 'O';
         statusText.innerText = `Computer's turn...`;
-        setTimeout(computerMove, 450); // Small delay for realism
+        setTimeout(computerMove, 400);
       }
     }
 
     function computerMove() {
       if (!gameActive) return;
-      // Pick a random empty cell
+      winLine = [];
       const emptyCells = board.map((cell, idx) => cell === '' ? idx : null).filter(idx => idx !== null);
       if (emptyCells.length === 0) return;
       const moveIdx = emptyCells[Math.floor(Math.random() * emptyCells.length)];
       board[moveIdx] = 'O';
-      playMoveSound();
       renderBoard();
       const won = checkWin(board, 'O');
       if (won) {
@@ -294,13 +76,9 @@
         renderBoard();
         statusText.innerText = `Computer wins!`;
         gameActive = false;
-        playWinSound();
-        setTimeout(showProposal, 900);
       } else if (board.every(cell => cell !== '')) {
         statusText.innerText = "It's a draw!";
         gameActive = false;
-        playWinSound();
-        setTimeout(showProposal, 900);
       } else {
         currentPlayer = 'X';
         statusText.innerText = `Your turn!`;
@@ -319,26 +97,6 @@
       return false;
     }
 
-    function playMoveSound() {
-      try {
-        moveSound.currentTime = 0;
-        moveSound.play();
-      } catch (e) {}
-    }
-
-    function playWinSound() {
-      try {
-        winSound.currentTime = 0;
-        winSound.play();
-      } catch (e) {}
-    }
-
-    function showProposal() {
-      popup.style.display = 'flex';
-    }
-    closePopup.onclick = function() {
-      popup.style.display = 'none';
-    };
     resetBtn.onclick = function() {
       board = Array(9).fill('');
       currentPlayer = 'X';
@@ -346,9 +104,8 @@
       winLine = [];
       statusText.innerText = `Your turn!`;
       renderBoard();
-      popup.style.display = 'none';
     };
-    // Initial render
+
     renderBoard();
   </script>
 </body>
