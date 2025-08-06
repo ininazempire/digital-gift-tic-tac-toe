@@ -207,7 +207,7 @@
 </head>
 <body>
   <h1>Pixel Tic Tac Toe</h1>
-  <div id="status">Player X's turn</div>
+  <div id="status">Your turn!</div>
   <div id="game"></div>
   <button id="reset">RESTART</button>
   <div id="popup">
@@ -223,15 +223,20 @@
       <button id="close-popup">YES! Let's Win Together 💍</button>
     </div>
   </div>
+  <!-- SOUND EFFECTS: free online sources, no 404s -->
+  <audio id="move-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b7e1d.mp3"></audio>
+  <audio id="win-sound" src="https://cdn.pixabay.com/audio/2022/10/16/audio_129b8f0d0f.mp3"></audio>
   <script>
     const gameBoard = document.getElementById('game');
     const statusText = document.getElementById('status');
     const resetBtn = document.getElementById('reset');
     const popup = document.getElementById('popup');
     const closePopup = document.getElementById('close-popup');
+    const moveSound = document.getElementById('move-sound');
+    const winSound = document.getElementById('win-sound');
 
     let board = Array(9).fill('');
-    let currentPlayer = 'X';
+    let currentPlayer = 'X'; // Player is always 'X', computer is 'O'
     let gameActive = true;
     let winLine = [];
 
@@ -241,7 +246,8 @@
         const div = document.createElement('button');
         div.className = 'cell';
         div.innerText = cell;
-        div.disabled = !gameActive || cell !== '';
+        // Only allow click if game is active, cell is empty, and it's player's turn
+        div.disabled = !gameActive || cell !== '' || currentPlayer !== 'X';
         if (winLine.includes(idx)) div.classList.add('winner');
         div.addEventListener('click', () => handleMove(idx));
         gameBoard.appendChild(div);
@@ -249,23 +255,55 @@
     }
 
     function handleMove(idx) {
-      if (!gameActive || board[idx] !== '') return;
+      if (!gameActive || board[idx] !== '' || currentPlayer !== 'X') return;
       board[idx] = currentPlayer;
+      playMoveSound();
       renderBoard();
       const won = checkWin(board, currentPlayer);
       if (won) {
         winLine = won;
         renderBoard();
-        statusText.innerText = `Player ${currentPlayer} wins!`;
+        statusText.innerText = `You win! 🎉`;
         gameActive = false;
+        playWinSound();
         setTimeout(showProposal, 900);
       } else if (board.every(cell => cell !== '')) {
         statusText.innerText = "It's a draw!";
         gameActive = false;
+        playWinSound();
         setTimeout(showProposal, 900);
       } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        statusText.innerText = `Player ${currentPlayer}'s turn`;
+        currentPlayer = 'O';
+        statusText.innerText = `Computer's turn...`;
+        setTimeout(computerMove, 450); // Small delay for realism
+      }
+    }
+
+    function computerMove() {
+      if (!gameActive) return;
+      // Pick a random empty cell
+      const emptyCells = board.map((cell, idx) => cell === '' ? idx : null).filter(idx => idx !== null);
+      if (emptyCells.length === 0) return;
+      const moveIdx = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      board[moveIdx] = 'O';
+      playMoveSound();
+      renderBoard();
+      const won = checkWin(board, 'O');
+      if (won) {
+        winLine = won;
+        renderBoard();
+        statusText.innerText = `Computer wins!`;
+        gameActive = false;
+        playWinSound();
+        setTimeout(showProposal, 900);
+      } else if (board.every(cell => cell !== '')) {
+        statusText.innerText = "It's a draw!";
+        gameActive = false;
+        playWinSound();
+        setTimeout(showProposal, 900);
+      } else {
+        currentPlayer = 'X';
+        statusText.innerText = `Your turn!`;
       }
     }
 
@@ -281,6 +319,20 @@
       return false;
     }
 
+    function playMoveSound() {
+      try {
+        moveSound.currentTime = 0;
+        moveSound.play();
+      } catch (e) {}
+    }
+
+    function playWinSound() {
+      try {
+        winSound.currentTime = 0;
+        winSound.play();
+      } catch (e) {}
+    }
+
     function showProposal() {
       popup.style.display = 'flex';
     }
@@ -292,7 +344,7 @@
       currentPlayer = 'X';
       gameActive = true;
       winLine = [];
-      statusText.innerText = `Player ${currentPlayer}'s turn`;
+      statusText.innerText = `Your turn!`;
       renderBoard();
       popup.style.display = 'none';
     };
@@ -300,7 +352,4 @@
     renderBoard();
   </script>
 </body>
-
 </html>
-
-
