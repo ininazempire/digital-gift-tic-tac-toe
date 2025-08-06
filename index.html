@@ -211,7 +211,15 @@
       <button id="close-popup">YES! Let's Win Together 💍</button>
     </div>
   </div>
+  
+<!-- Sound Effects -->
+<audio id="move-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b7e1d.mp3"></audio>
+<audio id="win-sound" src="https://cdn.pixabay.com/audio/2022/10/16/audio_129b8f0d0f.mp3"></audio>
+<!-- Background Music -->
+<audio id="bg-music" src="https://cdn.pixabay.com/audio/2022/10/16/audio_128b7f2c07.mp3" loop></audio>
+  
   <script>
+    
     const gameBoard = document.getElementById('game');
     const statusText = document.getElementById('status');
     const resetBtn = document.getElementById('reset');
@@ -245,6 +253,7 @@
     function handleMove(idx) {
       if (!gameActive || board[idx] !== '' || currentPlayer() !== 'X') return;
       board[idx] = 'X';
+      playMoveSound();
       renderBoard();
       const won = checkWin(board, 'X');
       if (won) {
@@ -271,6 +280,7 @@
       if (emptyCells.length === 0) return;
       const moveIdx = emptyCells[Math.floor(Math.random() * emptyCells.length)];
       board[moveIdx] = 'O';
+      playMoveSound();
       renderBoard();
       const won = checkWin(board, 'O');
       if (won) {
@@ -317,8 +327,33 @@
 
     // Initial render
     renderBoard();
+    
+const bgMusic = document.getElementById('bg-music');
+bgMusic.volume = 0.2; // Not too loud
+// Optionally, start music after first user interaction to avoid browser autoplay block
+document.addEventListener('click', function startMusicOnce() {
+  bgMusic.play();
+  document.removeEventListener('click', startMusicOnce);
+});
+    const moveSound = document.getElementById('move-sound');
+const winSound = document.getElementById('win-sound');
+
+function playMoveSound() {
+  try {
+    moveSound.currentTime = 0;
+    moveSound.play();
+  } catch (e) {}
+}
+function playWinSound() {
+  try {
+    winSound.currentTime = 0;
+    winSound.play();
+  } catch (e) {}
+}
+    
   </script>
 </body>
 </html>
+
 
 
