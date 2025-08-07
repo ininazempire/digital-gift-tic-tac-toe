@@ -194,6 +194,11 @@
   </style>
 </head>
 <body>
+
+<audio id="move-sound" src="move-sound.mp3"></audio>
+<audio id="win-sound" src="win-sound.mp3"></audio>
+<audio id="bg-music" src="bg-music.mp3" loop></audio>
+  
   <h1>Pixel Tic Tac Toe</h1>
   <div id="status">Your turn!</div>
   <div id="game"></div>
@@ -212,6 +217,32 @@
     </div>
   </div>
   <script>
+
+const moveSound = document.getElementById('move-sound');
+const winSound = document.getElementById('win-sound');
+const bgMusic = document.getElementById('bg-music');
+
+// Start background music after first click (browser policy)
+bgMusic.volume = 0.2;
+document.addEventListener('click', function startMusicOnce() {
+  bgMusic.play();
+  document.removeEventListener('click', startMusicOnce);
+});
+
+function playMoveSound() {
+  try {
+    moveSound.currentTime = 0;
+    moveSound.play();
+  } catch (e) {}
+}
+
+function playWinSound() {
+  try {
+    winSound.currentTime = 0;
+    winSound.play();
+  } catch (e) {}
+}
+    
     const gameBoard = document.getElementById('game');
     const statusText = document.getElementById('status');
     const resetBtn = document.getElementById('reset');
@@ -246,10 +277,12 @@
       if (!gameActive || board[idx] !== '' || currentPlayer() !== 'X') return;
       board[idx] = 'X';
       renderBoard();
+      playMoveSound();
       const won = checkWin(board, 'X');
       if (won) {
         winLine = won;
         renderBoard();
+        playWinSound();
         statusText.innerText = `You win!`;
         gameActive = false;
         setTimeout(showProposal, 900);
@@ -320,6 +353,7 @@
   </script>
 </body>
 </html>
+
 
 
 
