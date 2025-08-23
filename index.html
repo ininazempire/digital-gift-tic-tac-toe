@@ -197,10 +197,10 @@
 
 <audio id="move-sound" src="move-sound.mp3"></audio>
 <audio id="win-sound" src="win-sound.mp3"></audio>
-<audio id="bg-music" src="bg-music.mp3"></audio>
+<audio id="bg-music" src="bg-music.mp3" loop></audio>
   
   <h1>Pixel Tic Tac Toe</h1>
-  <div id="status">Your turn!</div>
+  <div id="status" aria-live="polite">Your turn!</div>
   <div id="game"></div>
   <button id="reset">RESTART</button>
   <div id="popup">
@@ -221,6 +221,15 @@ const moveSound = document.getElementById('move-sound');
 const winSound = document.getElementById('win-sound');
 const bgMusic = document.getElementById('bg-music');
 bgMusic.volume = 0.2;
+
+// ✅ Autoplay fix: only start music after first move
+let musicStarted = false;
+function startMusic() {
+  if (!musicStarted) {
+    bgMusic.play().catch(() => {});
+    musicStarted = true;
+  }
+}
 
 function playMoveSound() {
   try {
@@ -260,7 +269,6 @@ function playWinSound() {
     }
 
     function currentPlayer() {
-      // X always starts, O is AI. Count number of X's and O's to determine turn.
       const xCount = board.filter(v => v === 'X').length;
       const oCount = board.filter(v => v === 'O').length;
       return xCount === oCount ? 'X' : 'O';
@@ -268,6 +276,10 @@ function playWinSound() {
 
     function handleMove(idx) {
       if (!gameActive || board[idx] !== '' || currentPlayer() !== 'X') return;
+      
+      // ✅ Start music after first valid move
+      startMusic();
+
       board[idx] = 'X';
       renderBoard();
       playMoveSound();
@@ -276,8 +288,6 @@ function playWinSound() {
         winLine = won;
         renderBoard();
         playWinSound();
-        bgMusic.currentTime = 0;
-        bgMusic.play();
         statusText.innerText = `You win!`;
         gameActive = false;
         setTimeout(showProposal, 900);
@@ -341,9 +351,9 @@ function playWinSound() {
       statusText.innerText = `Your turn!`;
       renderBoard();
       popup.style.display = 'none';
-      // Optionally stop the background music on reset:
       bgMusic.pause();
       bgMusic.currentTime = 0;
+      musicStarted = false; // reset flag for new game
     };
 
     // Initial render
