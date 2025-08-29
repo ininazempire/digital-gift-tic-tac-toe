@@ -1,29 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Pixel Tic Tac Toe ❤️ Proposal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Press Start 2P', Arial, sans-serif;
-      background: linear-gradient(135deg, #ffe1f5 0%, #c4faf6 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-    h1 {
-      color: #ff69b4;
-      text-shadow: 2px 2px 0 #fff, 4px 4px 0 #c4faf6;
-      margin-top: 24px;
-      font-size: 1.7rem;
-      letter-spacing: 2px;
-    }
-    #game {
-      display: grid;
-      grid-template-columns:
+<script>
+const moveSound = document.getElementById('move-sound');
+const winSound = document.getElementById('win-sound');
+const bgMusic = document.getElementById('bg-music');
+bgMusic.volume = 0.2;
+
+function playMoveSound() {
+  try {
+    moveSound.currentTime = 0;
+    moveSound.play();
+  } catch (e) {}
+}
+
+function playWinSound() {
+  try {
+    winSound.currentTime = 0;
+    winSound.play();
+  } catch (e) {}
+}
+    
+const gameBoard = document.getElementById('game');
+const statusText = document.getElementById('status');
+const resetBtn = document.getElementById('reset');
+const popup = document.getElementById('popup');
+const closePopup = document.getElementById('close-popup');
+
+let board = Array(9).fill('');
+let gameActive = true;
+let winLine = [];
+
+function renderBoard() {
+  gameBoard.innerHTML = '';
+  board.forEach((cell, idx) => {
+    const div = document.createElement('button');
+    div.className = 'cell';
+    div.innerText = cell;
+    div.disabled = !gameActive || cell !== '' || currentPlayer() !== 'X';
+    if (winLine.includes(idx)) div.classList.add('winner');
+    div.addEventListener('click', () => handleMove(idx));
+    gameBoard.appendChild(div);
+  });
+}
+
+function currentPlayer() {
+  const xCount = board.filter(v => v === 'X').length;
+  const oCount = board.filter(v => v === 'O').length;
+  return xCount === oCount ? 'X' : 'O';
+}
+
+function handleMove(idx) {
+  if (!gameActive || board[idx] !== '' || currentPlayer() !== 'X') return;
+
+  board[idx] = 'X';
+  renderBoard();
+  playMoveSound();
+  const won = checkWin(board, 'X');
+  if (won) {
+    winLine = won;
+    renderBoard();
+    playWinSound();
+    statusText.innerText = `You win!`;
+    gameActive = false;
+
+    // 🎵 Start background music only if player wins
+    bgMusic.play().catch(() => {});
+
+    setTimeout(showProposal, 900);
+  } else if (board.every(cell => cell !== '')) {
+    statusText.innerText = "It's a draw!";
+    gameActive = false;
+    setTimeout(showProposal, 900);
+  } else {
+    statusText.innerText = `My turn...`;
+    setTimeout(computerMove, 600);
+  }
+}
+
+function computerMove() {
+  if (!gameActive) return;
+  const emptyCells = board
+    .map((cell, idx) => cell === '' ? idx : null)
+    .filter(idx => idx !== null);
+  if (emptyCells.length === 0) return;
+  const moveIdx = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  board[moveIdx] = 'O';
+  renderBoard();
+  const won = checkWin(board, 'O');
+  if (won) {
+    winLine = won;
+    renderBoard();
+    statusText.innerText = `Computer wins!`;
+    gameActive = false;
+    setTimeout(showProposal, 900);
+  } else if (board.every(cell => cell !== '')) {
+    statusText.innerText = "It's a draw!";
+    gameActive = false;
+    setTimeout(showProposal, 900);
+  } else {
+    statusText.innerText = `Your turn!`;
+  }
+}
+
+function checkWin(b, p) {
+  const winPatterns = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+  for (let pattern of winPatterns) {
+    if (pattern.every(i => b[i] === p)) return pattern;
+  }
+  return false;
+}
+
+function showProposal() {
+  popup.style.display = 'flex';
+}
+closePopup.onclick = function() {
+  popup.style.display = 'none';
+};
+resetBtn.onclick = function() {
+  board = Array(9).fill('');
+  gameActive = true;
+  winLine = [];
+  statusText.innerText = `Your turn!`;
+  renderBoard();
+  popup.style.display = 'none';
+
+  // Stop background music on reset
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+};
+
+// Initial render
+renderBoard();
+</script>
